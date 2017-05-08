@@ -25,6 +25,22 @@ public class ViewImplementationAdapter extends BaseAdapter{
     super("/model-based/ViewImplementation.java");
   }
 
+  public void addEnum() {
+    type("public Enum FooEnum {\n A,\nB\n}");
+  }
+
+  public void addMethod() {
+    type("public void FooMethod(){\n}");
+  }
+
+  public void addVariable() {
+    type("public final int fooInt = 1;");
+  }
+
+  public void placeCaretAtUndefined() {
+
+  }
+
   @Override
   public String getName() {
     return "testViewImplementation";

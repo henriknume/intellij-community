@@ -15,6 +15,7 @@
  */
 package se.chalmers.dat261.model;
 
+import nz.ac.waikato.modeljunit.Action;
 import nz.ac.waikato.modeljunit.FsmModel;
 import se.chalmers.dat261.adapter.ViewImplementationAdapter;
 
@@ -22,9 +23,11 @@ import se.chalmers.dat261.adapter.ViewImplementationAdapter;
  * Created by David on 2017-05-08.
  */
 public class ViewImplementationModel implements FsmModel {
+
+  private State state = State.CARET_AT_UNDEFINED;
   private ViewImplementationAdapter adapter;
 
-  public ViewImplementationModel() {
+  public ViewImplementationModel() throws Exception {
     this.adapter = new ViewImplementationAdapter();
   }
 
@@ -36,13 +39,22 @@ public class ViewImplementationModel implements FsmModel {
     VARIABLE_IMPL, VARIABLE_DOCU
   }
 
+  @Action
+  public void placeCaretAtUndefined() {
+
+  }
+
   @Override
   public Object getState() {
-    return null;
+    return state;
   }
 
   @Override
   public void reset(boolean b) {
 
+  }
+
+  public void cleanup() throws Exception {
+    adapter.cleanup();
   }
 }
