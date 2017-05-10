@@ -20,28 +20,52 @@ import nz.ac.waikato.modeljunit.FsmModel;
 import se.chalmers.dat261.adapter.ViewImplementationAdapter;
 
 /**
- * Created by David on 2017-05-08.
+ * Created by David on 2017-05-08
  */
 public class ViewImplementationModel implements FsmModel {
 
   private State state = State.CARET_AT_UNDEFINED;
   private ViewImplementationAdapter adapter;
 
+  private int enumCount = 0;
+  private int methodCount = 0;
+  private int variableCount = 0;
+
   public ViewImplementationModel() throws Exception {
     this.adapter = new ViewImplementationAdapter();
   }
 
   private enum State {
-    CARET_AT_UNDEFINED, CARET_AT_ENUM,
-    CARET_AT_METHOD, CARET_AT_VARIABLE,
-    ENUM_IMPL, ENUM_DOCU,
-    METHOD_IMPL, METHOD_DOCU,
-    VARIABLE_IMPL, VARIABLE_DOCU
+    //CARET_AT_ENUM,
+    CARET_AT_METHOD,
+    //CARET_AT_VARIABLE,
+    //ENUM_IMPL,
+    //ENUM_DOCU,
+    //METHOD_IMPL,
+    //METHOD_DOCU,
+    //VARIABLE_IMPL,
+    //VARIABLE_DOCU,
+    CARET_AT_UNDEFINED
+  }
+
+  public boolean placeCaretAtUndefinedGuard() {
+    return !(state == State.CARET_AT_UNDEFINED);
+  }
+
+  public boolean placeCaretAtMethodGuard() {
+    return state == State.CARET_AT_UNDEFINED;
   }
 
   @Action
   public void placeCaretAtUndefined() {
+    adapter.placeCaretAtUndefined();
+    state = State.CARET_AT_UNDEFINED;
+  }
 
+  @Action
+  public void placeCaretAtMethod() {
+    adapter.placeCaretAtMethod();
+    state = State.CARET_AT_METHOD;
   }
 
   @Override
@@ -51,7 +75,9 @@ public class ViewImplementationModel implements FsmModel {
 
   @Override
   public void reset(boolean b) {
-
+    state = State.CARET_AT_UNDEFINED;
+    adapter.placeCaretAtUndefined();
+    //And clear the class
   }
 
   public void cleanup() throws Exception {

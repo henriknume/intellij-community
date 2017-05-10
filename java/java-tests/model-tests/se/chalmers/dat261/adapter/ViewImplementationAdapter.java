@@ -16,7 +16,7 @@
 package se.chalmers.dat261.adapter;
 
 /**
- * Created by David on 2017-05-08.
+ * Created by David on 2017-05-08
  */
 @SuppressWarnings({"JUnitTestCaseWithNoTests", "JUnitTestCaseWithNonTrivialConstructors", "JUnitTestClassNamingConvention"})
 public class ViewImplementationAdapter extends BaseAdapter{
@@ -38,6 +38,10 @@ public class ViewImplementationAdapter extends BaseAdapter{
   }
 
   public void placeCaretAtUndefined() {
+
+  }
+
+  public void placeCaretAtMethod() {
 
   }
 
