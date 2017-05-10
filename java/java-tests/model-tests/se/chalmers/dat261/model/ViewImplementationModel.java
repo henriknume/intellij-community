@@ -15,14 +15,28 @@
  */
 package se.chalmers.dat261.model;
 
+import com.intellij.codeInsight.javadoc.ViewImplementationAdapter;
 import nz.ac.waikato.modeljunit.Action;
 import nz.ac.waikato.modeljunit.FsmModel;
-import se.chalmers.dat261.adapter.ViewImplementationAdapter;
 
 /**
  * Created by David on 2017-05-08.
  */
 public class ViewImplementationModel implements FsmModel {
+
+
+
+
+  private String[] variableRef = new String[]{"public final int fooInt = 1;\n","",""};
+  public boolean isVariableAdded = false;
+
+  private String[] methodRef = new String[]{"public void fooMethod(){}\n"," "," " };
+  public boolean isMethodAdded = false;
+
+  private String[] enumRef = new String[]{"public enum Foo{A, B,};\n",""," " };
+  public boolean isEnumAdded = false;
+
+
 
   private State state = State.CARET_AT_UNDEFINED;
   private ViewImplementationAdapter adapter;
@@ -39,9 +53,28 @@ public class ViewImplementationModel implements FsmModel {
     VARIABLE_IMPL, VARIABLE_DOCU
   }
 
+  public boolean addVariableGuard() {
+    return (state == State.CARET_AT_UNDEFINED && !isVariableAdded);
+  }
+
+  @Action
+  public void addVariable() {
+      adapter.addVariable(variableRef[0]);
+      isVariableAdded = true;
+  }
+
+  public boolean removeVariableGuard() {
+    return state == State.CARET_AT_UNDEFINED && isVariableAdded;
+  }
+
+  public void removeVariable() {
+    adapter.removeVariable();
+  }
+
   @Action
   public void placeCaretAtUndefined() {
-
+    adapter.placeCaretAtUndefined();
+    System.out.println(adapter.getContent());
   }
 
   @Override
