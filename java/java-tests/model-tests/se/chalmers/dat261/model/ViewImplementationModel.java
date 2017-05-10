@@ -20,12 +20,9 @@ import nz.ac.waikato.modeljunit.Action;
 import nz.ac.waikato.modeljunit.FsmModel;
 
 /**
- * Created by David on 2017-05-08.
+ * Created by David on 2017-05-08
  */
 public class ViewImplementationModel implements FsmModel {
-
-
-
 
   private String[] variableRef = new String[]{"public final int fooInt = 1;\n","",""};
   public boolean isVariableAdded = false;
@@ -36,21 +33,36 @@ public class ViewImplementationModel implements FsmModel {
   private String[] enumRef = new String[]{"public enum Foo{A, B,};\n",""," " };
   public boolean isEnumAdded = false;
 
-
-
   private State state = State.CARET_AT_UNDEFINED;
   private ViewImplementationAdapter adapter;
+
+  private int enumCount = 0;
+  private int methodCount = 0;
+  private int variableCount = 0;
 
   public ViewImplementationModel() throws Exception {
     this.adapter = new ViewImplementationAdapter();
   }
 
   private enum State {
-    CARET_AT_UNDEFINED, CARET_AT_ENUM,
-    CARET_AT_METHOD, CARET_AT_VARIABLE,
-    ENUM_IMPL, ENUM_DOCU,
-    METHOD_IMPL, METHOD_DOCU,
-    VARIABLE_IMPL, VARIABLE_DOCU
+    //CARET_AT_ENUM,
+    CARET_AT_METHOD,
+    //CARET_AT_VARIABLE,
+    //ENUM_IMPL,
+    //ENUM_DOCU,
+    //METHOD_IMPL,
+    //METHOD_DOCU,
+    //VARIABLE_IMPL,
+    //VARIABLE_DOCU,
+    CARET_AT_UNDEFINED
+  }
+
+  public boolean placeCaretAtUndefinedGuard() {
+    return !(state == State.CARET_AT_UNDEFINED);
+  }
+
+  public boolean placeCaretAtMethodGuard() {
+    return state == State.CARET_AT_UNDEFINED;
   }
 
   public boolean addVariableGuard() {
@@ -58,23 +70,9 @@ public class ViewImplementationModel implements FsmModel {
   }
 
   @Action
-  public void addVariable() {
-      adapter.addVariable(variableRef[0]);
-      isVariableAdded = true;
-  }
-
-  public boolean removeVariableGuard() {
-    return state == State.CARET_AT_UNDEFINED && isVariableAdded;
-  }
-
-  public void removeVariable() {
-    adapter.removeVariable();
-  }
-
-  @Action
   public void placeCaretAtUndefined() {
     adapter.placeCaretAtUndefined();
-    System.out.println(adapter.getContent());
+    state = State.CARET_AT_UNDEFINED;
   }
 
   @Override
@@ -84,7 +82,9 @@ public class ViewImplementationModel implements FsmModel {
 
   @Override
   public void reset(boolean b) {
-
+    state = State.CARET_AT_UNDEFINED;
+    adapter.placeCaretAtUndefined();
+    //And clear the class
   }
 
   public void cleanup() throws Exception {
