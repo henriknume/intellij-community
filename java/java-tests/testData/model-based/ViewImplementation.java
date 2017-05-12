@@ -1,11 +1,4 @@
 
 public class ViewImplementation {
-
-
-
   <caret>
-
-
-
-
 }

@@ -15,11 +15,9 @@
  */
 package com.intellij.codeInsight.javadoc;
 
+import com.intellij.codeInsight.hint.ImplementationViewComponent;
 import com.intellij.openapi.actionSystem.IdeActions;
-import com.intellij.openapi.editor.Document;
-import com.intellij.psi.PsiDocumentManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiField;
+import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiClassImpl;
 import se.chalmers.dat261.adapter.BaseAdapter;
 
@@ -29,6 +27,10 @@ import se.chalmers.dat261.adapter.BaseAdapter;
 @SuppressWarnings({"JUnitTestCaseWithNoTests", "JUnitTestCaseWithNonTrivialConstructors", "JUnitTestClassNamingConvention"})
 public class ViewImplementationAdapter extends BaseAdapter {
   private PsiClassImpl javaClass;
+
+  private PsiField selectedVariable;
+  private PsiMethod selectedMethod;
+  private PsiEnumConstant selectedEnum;
 
   public ViewImplementationAdapter() throws Exception {
     super("/model-based/ViewImplementation.java");
@@ -62,29 +64,35 @@ public class ViewImplementationAdapter extends BaseAdapter {
   }
 
   public void removeVariable() {
-    Document document = PsiDocumentManager.getInstance(ourProject).getDocument(myFile);
-    boolean writable = document.isWritable();
-    updateClassVariable();
+
     PsiField[] fields = javaClass.getAllFields();
     int startOffset = 0, endOffset = 0;
     for (PsiField field : fields) {
       startOffset = field.getTextRange().getStartOffset();
       endOffset = field.getTextRange().getEndOffset();
-      myEditor.getCaretModel().moveToOffset(startOffset);
-      invokeAction(IdeActions.ACTION_EDITOR_DELETE_LINE);
     }
-    down();
+    myEditor.getCaretModel().moveToOffset(startOffset);
+    invokeAction(IdeActions.ACTION_EDITOR_DELETE_LINE);
+
     PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
     updateClassVariable();
   }
 
   public void placeCaretAtUndefined() {
-
+    selectedVariable = null;
   }
 
-  public void reset() {
-
+  public void placeCaretAtVariable() {
+    PsiField[] fields = javaClass.getAllFields();
+    for (PsiField field : fields) {
+      this.selectedVariable = field;
+    }
   }
+
+  public String viewVariableDocumentation() {
+    return ImplementationViewComponent.getNewText(selectedVariable);
+  }
+
 
   public String getContent() {
     return getEditor().getDocument().getText();

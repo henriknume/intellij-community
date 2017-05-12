@@ -46,7 +46,7 @@ public class CodeCompletionTest extends TestCase {
         tester.addCoverageMetric(new ActionCoverage());
         tester.addCoverageMetric(new TransitionPairCoverage());
 
-        tester.generate(20);
+        tester.generate(200);
         tester.printCoverage();
       }
       catch (Exception e) {

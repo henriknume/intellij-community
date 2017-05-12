@@ -19,6 +19,8 @@ import com.intellij.codeInsight.javadoc.ViewImplementationAdapter;
 import nz.ac.waikato.modeljunit.Action;
 import nz.ac.waikato.modeljunit.FsmModel;
 
+import static org.junit.Assert.assertEquals;
+
 /**
  * Created by David on 2017-05-08
  */
@@ -71,12 +73,12 @@ public class ViewImplementationModel implements FsmModel {
   }
 
 
-  public boolean removeVariableGuard() {
+  public boolean rmVariableGuard() {
     return (state == State.CARET_AT_UNDEFINED && isVariableAdded);
   }
 
   @Action
-  public void removeVariable() {
+  public void rmVariable() {
     adapter.removeVariable();
     System.out.println(adapter.getContent());
     isVariableAdded = false;
@@ -84,13 +86,46 @@ public class ViewImplementationModel implements FsmModel {
 
 
   public boolean placeCaretAtUndefinedGuard() {
-    return !(state == State.CARET_AT_UNDEFINED);
+    return (state == State.CARET_AT_VARIABLE ||
+            state == State.CARET_AT_METHOD ||
+            state == State.CARET_AT_ENUM);
   }
 
   @Action
   public void placeCaretAtUndefined() {
     adapter.placeCaretAtUndefined();
     state = State.CARET_AT_UNDEFINED;
+  }
+
+
+  public boolean placeCaretAtVariableGuard() {
+    return (state == State.CARET_AT_UNDEFINED && isVariableAdded);
+  }
+
+  @Action
+  public void placeCaretAtVariable() {
+    adapter.placeCaretAtVariable();
+    state = State.CARET_AT_VARIABLE;
+  }
+
+  public boolean viewImpl3Guard() {
+    return (state == State.CARET_AT_VARIABLE);
+  }
+
+  @Action
+  public void viewImpl3() {
+    String impl = adapter.viewVariableDocumentation();
+    assertEquals(variableRef[0].trim(), impl.trim());
+    state = State.VARIABLE_IMPL;
+  }
+
+  public boolean close6Guard() {
+    return (state == State.VARIABLE_IMPL);
+  }
+
+  @Action
+  public void close6() {
+    state = State.CARET_AT_VARIABLE;
   }
 
   @Override
