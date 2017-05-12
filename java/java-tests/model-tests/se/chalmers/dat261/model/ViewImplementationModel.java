@@ -20,13 +20,14 @@ import nz.ac.waikato.modeljunit.Action;
 import nz.ac.waikato.modeljunit.FsmModel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by David on 2017-05-08
  */
 public class ViewImplementationModel implements FsmModel {
 
-  private String[] variableRef = new String[]{"public final int fooInt = 1;\n", "", ""};
+  private String[] variableRef = new String[]{"public final int fooInt = 1;\n", "<PRE>public final int <b>fooInt = 1</b></PRE>", ""};
   public boolean isVariableAdded = false;
 
   private String[] methodRef = new String[]{"public void fooMethod(){}\n", " ", " "};
@@ -114,17 +115,27 @@ public class ViewImplementationModel implements FsmModel {
 
   @Action
   public void viewImpl3() {
-    String impl = adapter.viewVariableDocumentation();
+    String impl = adapter.viewVariableImplementation();
     assertEquals(variableRef[0].trim(), impl.trim());
     state = State.VARIABLE_IMPL;
   }
 
-  public boolean close6Guard() {
-    return (state == State.VARIABLE_IMPL);
+  public boolean viewDocu3Guard() {
+    return (state == State.CARET_AT_VARIABLE);
   }
 
   @Action
-  public void close6() {
+  public void viewDocu3() {
+    String docu = adapter.viewVariableDocumentation();
+    assertTrue(docu.contains(variableRef[1]));
+  }
+
+  public boolean closeVariableWindowGuard() {
+    return (state == State.VARIABLE_IMPL || state == State.VARIABLE_DOCU);
+  }
+
+  @Action
+  public void closeVariableWindow() {
     state = State.CARET_AT_VARIABLE;
   }
 

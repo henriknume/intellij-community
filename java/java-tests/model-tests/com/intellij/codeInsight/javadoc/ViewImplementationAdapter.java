@@ -16,6 +16,7 @@
 package com.intellij.codeInsight.javadoc;
 
 import com.intellij.codeInsight.hint.ImplementationViewComponent;
+import com.intellij.lang.java.JavaDocumentationProvider;
 import com.intellij.openapi.actionSystem.IdeActions;
 import com.intellij.psi.*;
 import com.intellij.psi.impl.source.PsiClassImpl;
@@ -89,10 +90,14 @@ public class ViewImplementationAdapter extends BaseAdapter {
     }
   }
 
-  public String viewVariableDocumentation() {
+  public String viewVariableImplementation() {
     return ImplementationViewComponent.getNewText(selectedVariable);
   }
 
+  public String viewVariableDocumentation() {
+    return JavaDocumentationProvider.generateExternalJavadoc(selectedVariable);
+
+  }
 
   public String getContent() {
     return getEditor().getDocument().getText();
