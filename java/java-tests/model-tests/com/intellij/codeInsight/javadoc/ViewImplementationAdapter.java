@@ -31,7 +31,7 @@ public class ViewImplementationAdapter extends BaseAdapter {
 
   private PsiField selectedVariable;
   private PsiMethod selectedMethod;
-  private PsiEnumConstant selectedEnum;
+  private PsiClass selectedEnum;
 
   public ViewImplementationAdapter() throws Exception {
     super("/model-based/ViewImplementation.java");
@@ -65,22 +65,43 @@ public class ViewImplementationAdapter extends BaseAdapter {
   }
 
   public void removeVariable() {
-
-    PsiField[] fields = javaClass.getAllFields();
-    int startOffset = 0, endOffset = 0;
+    PsiField[] fields = javaClass.getFields();
     for (PsiField field : fields) {
-      startOffset = field.getTextRange().getStartOffset();
-      endOffset = field.getTextRange().getEndOffset();
+      int startOffset = field.getTextRange().getStartOffset();
+      myEditor.getCaretModel().moveToOffset(startOffset);
+      invokeAction(IdeActions.ACTION_EDITOR_DELETE_LINE);
     }
-    myEditor.getCaretModel().moveToOffset(startOffset);
-    invokeAction(IdeActions.ACTION_EDITOR_DELETE_LINE);
 
+    PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
+    updateClassVariable();
+  }
+
+  public void removeEnum() {
+    PsiClass[] enums = javaClass.getInnerClasses();
+    for (PsiClass innerEnum : enums) {
+      if (innerEnum.isEnum()) {
+        int startOffset = innerEnum.getTextRange().getStartOffset();
+        myEditor.getCaretModel().moveToOffset(startOffset);
+        invokeAction(IdeActions.ACTION_EDITOR_DELETE_LINE);
+      }
+    }
     PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
     updateClassVariable();
   }
 
   public void placeCaretAtUndefined() {
     selectedVariable = null;
+    selectedEnum = null;
+    selectedMethod = null;
+  }
+
+  public void placeCaretAtEnum() {
+    PsiClass[] enums = javaClass.getInnerClasses();
+    for (PsiClass innerEnum : enums) {
+      if (innerEnum.isEnum()) {
+        this.selectedEnum = innerEnum;
+      }
+    }
   }
 
   public void placeCaretAtVariable() {
@@ -90,13 +111,20 @@ public class ViewImplementationAdapter extends BaseAdapter {
     }
   }
 
+  public String viewEnumImplementation() {
+    return ImplementationViewComponent.getNewText(selectedEnum);
+  }
+
+  public String viewEnumDocumentation() {
+    return JavaDocumentationProvider.generateExternalJavadoc(selectedEnum);
+  }
+
   public String viewVariableImplementation() {
     return ImplementationViewComponent.getNewText(selectedVariable);
   }
 
   public String viewVariableDocumentation() {
     return JavaDocumentationProvider.generateExternalJavadoc(selectedVariable);
-
   }
 
   public String getContent() {

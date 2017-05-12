@@ -16,6 +16,7 @@
 package se.chalmers.dat261.model;
 
 import com.intellij.codeInsight.javadoc.ViewImplementationAdapter;
+import com.intellij.execution.testframework.sm.TestHistoryConfiguration;
 import nz.ac.waikato.modeljunit.Action;
 import nz.ac.waikato.modeljunit.FsmModel;
 
@@ -30,10 +31,10 @@ public class ViewImplementationModel implements FsmModel {
   private String[] variableRef = new String[]{"public final int fooInt = 1;\n", "<PRE>public final int <b>fooInt = 1</b></PRE>", ""};
   public boolean isVariableAdded = false;
 
-  private String[] methodRef = new String[]{"public void fooMethod(){}\n", " ", " "};
+  private String[] methodRef = new String[]{"public void fooMethod(){}\n", "", " "};
   public boolean isMethodAdded = false;
 
-  private String[] enumRef = new String[]{"public enum Foo{A, B,};\n", "", " "};
+  private String[] enumRef = new String[]{"public enum Foo{A, B,};\n", "Foo", " "};
   public boolean isEnumAdded = false;
 
   private State state = State.CARET_AT_UNDEFINED;
@@ -65,7 +66,6 @@ public class ViewImplementationModel implements FsmModel {
   public boolean addVariableGuard() {
     return (state == State.CARET_AT_UNDEFINED && !isVariableAdded);
   }
-
   @Action
   public void addVariable() {
     adapter.addVariable(variableRef[0]);
@@ -77,32 +77,48 @@ public class ViewImplementationModel implements FsmModel {
   public boolean rmVariableGuard() {
     return (state == State.CARET_AT_UNDEFINED && isVariableAdded);
   }
-
   @Action
   public void rmVariable() {
     adapter.removeVariable();
-    System.out.println(adapter.getContent());
     isVariableAdded = false;
   }
 
+  public boolean addEnumGuard() {
+    return (state == State.CARET_AT_UNDEFINED && !isEnumAdded);
+  }
+  @Action
+  public void addEnum() {
+    adapter.addEnum(enumRef[0]);
+    isEnumAdded = true;
+  }
+
+  public boolean rmEnumGuard() {
+    return (state == State.CARET_AT_UNDEFINED && isEnumAdded);
+  }
+  @Action
+  public void rmEnum() {
+    adapter.removeEnum();
+    isEnumAdded = false;
+  }
 
   public boolean placeCaretAtUndefinedGuard() {
     return (state == State.CARET_AT_VARIABLE ||
             state == State.CARET_AT_METHOD ||
             state == State.CARET_AT_ENUM);
   }
-
   @Action
   public void placeCaretAtUndefined() {
     adapter.placeCaretAtUndefined();
     state = State.CARET_AT_UNDEFINED;
+    System.out.println("-----------------------");
+    System.out.println(adapter.getContent());
+    System.out.println("-----------------------");
   }
 
 
   public boolean placeCaretAtVariableGuard() {
     return (state == State.CARET_AT_UNDEFINED && isVariableAdded);
   }
-
   @Action
   public void placeCaretAtVariable() {
     adapter.placeCaretAtVariable();
@@ -112,7 +128,6 @@ public class ViewImplementationModel implements FsmModel {
   public boolean viewImpl3Guard() {
     return (state == State.CARET_AT_VARIABLE);
   }
-
   @Action
   public void viewImpl3() {
     String impl = adapter.viewVariableImplementation();
@@ -123,7 +138,6 @@ public class ViewImplementationModel implements FsmModel {
   public boolean viewDocu3Guard() {
     return (state == State.CARET_AT_VARIABLE);
   }
-
   @Action
   public void viewDocu3() {
     String docu = adapter.viewVariableDocumentation();
@@ -133,10 +147,46 @@ public class ViewImplementationModel implements FsmModel {
   public boolean closeVariableWindowGuard() {
     return (state == State.VARIABLE_IMPL || state == State.VARIABLE_DOCU);
   }
-
   @Action
   public void closeVariableWindow() {
     state = State.CARET_AT_VARIABLE;
+  }
+
+  public boolean placeCaretAtEnumGuard() {
+    return (state == State.CARET_AT_UNDEFINED && isEnumAdded);
+  }
+  @Action
+  public void placeCaretAtEnum() {
+    adapter.placeCaretAtEnum();
+    state = State.CARET_AT_ENUM;
+  }
+
+  public boolean viewImpl1Guard() {
+    return (state == State.CARET_AT_ENUM);
+  }
+  @Action
+  public void viewImpl1() {
+    String impl = adapter.viewEnumImplementation();
+    assertEquals(enumRef[0].trim(), impl.trim());
+    state = State.ENUM_IMPL;
+  }
+
+  public boolean viewDocu1Guard(){
+    return (state == State.CARET_AT_ENUM);
+  }
+  @Action
+  public void viewDocu1() {
+    String docu = adapter.viewEnumDocumentation();
+    assertTrue(docu.contains(enumRef[1]));
+    state = State.ENUM_DOCU;
+  }
+
+  public boolean closeEnumWindowGuard() {
+    return (state == State.ENUM_IMPL || state == State.ENUM_DOCU);
+  }
+  @Action
+  public void closeEnumWindow() {
+    state = State.CARET_AT_ENUM;
   }
 
   @Override
