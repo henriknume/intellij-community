@@ -66,6 +66,7 @@ public class ViewImplementationModel implements FsmModel {
   @Action
   public void addVariable() {
     adapter.addVariable(variableRef[0]);
+    isVariableAdded = true;
   }
 
 
@@ -73,8 +74,10 @@ public class ViewImplementationModel implements FsmModel {
     return (state == State.CARET_AT_UNDEFINED && isVariableAdded);
   }
 
+  @Action
   public void removeVariable() {
     adapter.removeVariable();
+    System.out.println(adapter.getContent());
   }
 
 

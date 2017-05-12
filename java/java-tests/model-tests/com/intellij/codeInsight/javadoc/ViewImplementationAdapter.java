@@ -30,6 +30,10 @@ public class ViewImplementationAdapter extends BaseAdapter {
 
   public ViewImplementationAdapter() throws Exception {
     super("/model-based/ViewImplementation.java");
+    updateClassVariable();
+  }
+
+  private void updateClassVariable() {
     for (PsiElement child : myFile.getChildren()) {
       if (child instanceof PsiClassImpl) {
         javaClass = (PsiClassImpl)child;
@@ -40,24 +44,29 @@ public class ViewImplementationAdapter extends BaseAdapter {
   public void addEnum(String  stringEnum) {
     type(stringEnum);
     PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
+    updateClassVariable();
   }
 
   public void addMethod(String stringMethod) {
     type(stringMethod);
     PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
+    updateClassVariable();
   }
 
   public void addVariable(String stringVariable) {
     type(stringVariable);
     PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
+    updateClassVariable();
   }
 
   public void removeVariable() {
     PsiField[] fields = javaClass.getAllFields();
     for (PsiField field : fields) {
-      field.delete();
+      //field.delete();
+      System.out.println(field);
     }
     PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
+    updateClassVariable();
   }
 
   public void placeCaretAtUndefined() {
