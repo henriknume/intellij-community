@@ -24,42 +24,36 @@ import nz.ac.waikato.modeljunit.FsmModel;
  */
 public class ViewImplementationModel implements FsmModel {
 
-  private String[] variableRef = new String[]{"public final int fooInt = 1;\n","",""};
+  private String[] variableRef = new String[]{"public final int fooInt = 1;\n", "", ""};
   public boolean isVariableAdded = false;
 
-  private String[] methodRef = new String[]{"public void fooMethod(){}\n"," "," " };
+  private String[] methodRef = new String[]{"public void fooMethod(){}\n", " ", " "};
   public boolean isMethodAdded = false;
 
-  private String[] enumRef = new String[]{"public enum Foo{A, B,};\n",""," " };
+  private String[] enumRef = new String[]{"public enum Foo{A, B,};\n", "", " "};
   public boolean isEnumAdded = false;
 
   private State state = State.CARET_AT_UNDEFINED;
   private ViewImplementationAdapter adapter;
 
-  private int enumCount = 0;
-  private int methodCount = 0;
-  private int variableCount = 0;
 
   public ViewImplementationModel() throws Exception {
     this.adapter = new ViewImplementationAdapter();
   }
 
   private enum State {
-    //CARET_AT_ENUM,
+    CARET_AT_ENUM,
     CARET_AT_METHOD,
-    //CARET_AT_VARIABLE,
-    //ENUM_IMPL,
-    //ENUM_DOCU,
-    //METHOD_IMPL,
-    //METHOD_DOCU,
-    //VARIABLE_IMPL,
-    //VARIABLE_DOCU,
+    CARET_AT_VARIABLE,
+    ENUM_IMPL,
+    ENUM_DOCU,
+    METHOD_IMPL,
+    METHOD_DOCU,
+    VARIABLE_IMPL,
+    VARIABLE_DOCU,
     CARET_AT_UNDEFINED
   }
 
-  public boolean placeCaretAtUndefinedGuard() {
-    return !(state == State.CARET_AT_UNDEFINED);
-  }
 
   public boolean placeCaretAtMethodGuard() {
     return state == State.CARET_AT_UNDEFINED;
@@ -67,6 +61,25 @@ public class ViewImplementationModel implements FsmModel {
 
   public boolean addVariableGuard() {
     return (state == State.CARET_AT_UNDEFINED && !isVariableAdded);
+  }
+
+  @Action
+  public void addVariable() {
+    adapter.addVariable(variableRef[0]);
+  }
+
+
+  public boolean removeVariableGuard() {
+    return (state == State.CARET_AT_UNDEFINED && isVariableAdded);
+  }
+
+  public void removeVariable() {
+    adapter.removeVariable();
+  }
+
+
+  public boolean placeCaretAtUndefinedGuard() {
+    return !(state == State.CARET_AT_UNDEFINED);
   }
 
   @Action

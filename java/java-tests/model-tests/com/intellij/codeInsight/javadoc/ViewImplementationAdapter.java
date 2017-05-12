@@ -17,9 +17,8 @@ package com.intellij.codeInsight.javadoc;
 
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.PsiLocalVariable;
+import com.intellij.psi.PsiField;
 import com.intellij.psi.impl.source.PsiClassImpl;
-import com.intellij.psi.util.PsiTreeUtil;
 import se.chalmers.dat261.adapter.BaseAdapter;
 
 /**
@@ -54,11 +53,19 @@ public class ViewImplementationAdapter extends BaseAdapter {
   }
 
   public void removeVariable() {
-
+    PsiField[] fields = javaClass.getAllFields();
+    for (PsiField field : fields) {
+      field.delete();
+    }
+    PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
   }
 
   public void placeCaretAtUndefined() {
-    PsiElement[] esssslementss = PsiTreeUtil.getChildrenOfType(myFile, PsiLocalVariable.class);
+
+  }
+
+  public void reset() {
+
   }
 
   public String getContent() {
