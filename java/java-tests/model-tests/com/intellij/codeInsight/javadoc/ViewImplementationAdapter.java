@@ -66,16 +66,16 @@ public class ViewImplementationAdapter extends BaseAdapter {
     boolean writable = document.isWritable();
     updateClassVariable();
     PsiField[] fields = javaClass.getAllFields();
-    //int startOffset = 0, endOffset = 0;
-    //for (PsiField field : fields) {
-    //  startOffset = field.getTextRange().getStartOffset();
-    //  endOffset = field.getTextRange().getEndOffset();
-    //}
-    //myEditor.getCaretModel().moveToOffset(startOffset);
-    //invokeAction(IdeActions.ACTION_EDITOR_DELETE_LINE);
-    //down();
-    //PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
-    //updateClassVariable();
+    int startOffset = 0, endOffset = 0;
+    for (PsiField field : fields) {
+      startOffset = field.getTextRange().getStartOffset();
+      endOffset = field.getTextRange().getEndOffset();
+      myEditor.getCaretModel().moveToOffset(startOffset);
+      invokeAction(IdeActions.ACTION_EDITOR_DELETE_LINE);
+    }
+    down();
+    PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
+    updateClassVariable();
   }
 
   public void placeCaretAtUndefined() {
