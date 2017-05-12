@@ -15,6 +15,8 @@
  */
 package com.intellij.codeInsight.javadoc;
 
+import com.intellij.openapi.actionSystem.IdeActions;
+import com.intellij.openapi.editor.Document;
 import com.intellij.psi.PsiDocumentManager;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiField;
@@ -41,7 +43,7 @@ public class ViewImplementationAdapter extends BaseAdapter {
     }
   }
 
-  public void addEnum(String  stringEnum) {
+  public void addEnum(String stringEnum) {
     type(stringEnum);
     PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
     updateClassVariable();
@@ -60,13 +62,20 @@ public class ViewImplementationAdapter extends BaseAdapter {
   }
 
   public void removeVariable() {
-    PsiField[] fields = javaClass.getAllFields();
-    for (PsiField field : fields) {
-      //field.delete();
-      System.out.println(field);
-    }
-    PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
+    Document document = PsiDocumentManager.getInstance(ourProject).getDocument(myFile);
+    boolean writable = document.isWritable();
     updateClassVariable();
+    PsiField[] fields = javaClass.getAllFields();
+    //int startOffset = 0, endOffset = 0;
+    //for (PsiField field : fields) {
+    //  startOffset = field.getTextRange().getStartOffset();
+    //  endOffset = field.getTextRange().getEndOffset();
+    //}
+    //myEditor.getCaretModel().moveToOffset(startOffset);
+    //invokeAction(IdeActions.ACTION_EDITOR_DELETE_LINE);
+    //down();
+    //PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
+    //updateClassVariable();
   }
 
   public void placeCaretAtUndefined() {
