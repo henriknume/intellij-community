@@ -16,10 +16,7 @@
 package se.chalmers.dat261;
 
 import junit.framework.TestCase;
-import nz.ac.waikato.modeljunit.RandomTester;
-import nz.ac.waikato.modeljunit.StopOnFailureListener;
-import nz.ac.waikato.modeljunit.Tester;
-import nz.ac.waikato.modeljunit.VerboseListener;
+import nz.ac.waikato.modeljunit.*;
 import nz.ac.waikato.modeljunit.coverage.ActionCoverage;
 import nz.ac.waikato.modeljunit.coverage.StateCoverage;
 import nz.ac.waikato.modeljunit.coverage.TransitionCoverage;
@@ -37,7 +34,8 @@ public class CodeCompletionTest extends TestCase {
       ViewImplementationModel implementationModel = null;
       try {
         implementationModel = new ViewImplementationModel();
-        Tester tester = new RandomTester(implementationModel);
+        RandomTester tester = new RandomTester(implementationModel);
+
         tester.buildGraph();
         tester.addListener(new VerboseListener());
         tester.addListener(new StopOnFailureListener());
@@ -47,6 +45,7 @@ public class CodeCompletionTest extends TestCase {
         tester.addCoverageMetric(new TransitionPairCoverage());
 
         tester.generate(200);
+
         tester.printCoverage();
       }
       catch (Exception e) {

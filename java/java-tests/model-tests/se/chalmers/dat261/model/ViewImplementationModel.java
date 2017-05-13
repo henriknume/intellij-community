@@ -246,6 +246,7 @@ public class ViewImplementationModel implements FsmModel {
   public void viewDocu3() {
     String docu = adapter.viewVariableDocumentation();
     assertTrue(docu.contains(variableRef[1]));
+    state = State.VARIABLE_DOCU;
   }
 
   @Action
