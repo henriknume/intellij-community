@@ -27,8 +27,8 @@ import se.chalmers.dat261.adapter.BaseAdapter;
  */
 @SuppressWarnings({"JUnitTestCaseWithNoTests", "JUnitTestCaseWithNonTrivialConstructors", "JUnitTestClassNamingConvention"})
 public class ViewImplementationAdapter extends BaseAdapter {
-  private PsiClassImpl javaClass;
 
+  private PsiClassImpl javaClass;
   private PsiField selectedVariable;
   private PsiMethod selectedMethod;
   private PsiClass selectedEnum;
@@ -75,6 +75,8 @@ public class ViewImplementationAdapter extends BaseAdapter {
     PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
     updateClassVariable();
   }
+
+
 
   public void removeEnum() {
     PsiClass[] enums = javaClass.getInnerClasses();
@@ -134,5 +136,32 @@ public class ViewImplementationAdapter extends BaseAdapter {
   @Override
   public String getName() {
     return "testViewImplementation";
+  }
+
+  public void removeMethod() {
+    PsiMethod[] methods = javaClass.getMethods();
+    for (PsiMethod method : methods) {
+      int startOffset = method.getTextRange().getStartOffset();
+      myEditor.getCaretModel().moveToOffset(startOffset);
+      invokeAction(IdeActions.ACTION_EDITOR_DELETE_LINE);
+    }
+
+    PsiDocumentManager.getInstance(ourProject).commitAllDocuments();
+    updateClassVariable();
+  }
+
+  public void placeCaretAtMethod() {
+    PsiMethod[] methods = javaClass.getMethods();
+    for (PsiMethod method : methods) {
+      this.selectedMethod = method;
+    }
+  }
+
+  public String viewMethodImplementation() {
+    return ImplementationViewComponent.getNewText(selectedMethod);
+  }
+
+  public String viewMethodDocumentation() {
+    return JavaDocumentationProvider.generateExternalJavadoc(selectedMethod);
   }
 }

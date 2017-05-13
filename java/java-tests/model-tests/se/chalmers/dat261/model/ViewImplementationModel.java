@@ -58,54 +58,127 @@ public class ViewImplementationModel implements FsmModel {
     CARET_AT_UNDEFINED
   }
 
-
-  public boolean placeCaretAtMethodGuard() {
-    return state == State.CARET_AT_UNDEFINED;
-  }
-
   public boolean addVariableGuard() {
     return (state == State.CARET_AT_UNDEFINED && !isVariableAdded);
-  }
-  @Action
-  public void addVariable() {
-    adapter.addVariable(variableRef[0]);
-    System.out.println(adapter.getContent());
-    isVariableAdded = true;
-  }
-
-
-  public boolean rmVariableGuard() {
-    return (state == State.CARET_AT_UNDEFINED && isVariableAdded);
-  }
-  @Action
-  public void rmVariable() {
-    adapter.removeVariable();
-    isVariableAdded = false;
   }
 
   public boolean addEnumGuard() {
     return (state == State.CARET_AT_UNDEFINED && !isEnumAdded);
   }
-  @Action
-  public void addEnum() {
-    adapter.addEnum(enumRef[0]);
-    isEnumAdded = true;
+
+  public boolean addMethodGuard() { return (state == State.CARET_AT_UNDEFINED && !isMethodAdded); }
+
+  public boolean rmVariableGuard() {
+    return (state == State.CARET_AT_UNDEFINED && isVariableAdded);
   }
 
   public boolean rmEnumGuard() {
     return (state == State.CARET_AT_UNDEFINED && isEnumAdded);
   }
-  @Action
-  public void rmEnum() {
-    adapter.removeEnum();
-    isEnumAdded = false;
-  }
+
+  public boolean rmMethodGuard() { return (state == State.CARET_AT_UNDEFINED && isMethodAdded); }
 
   public boolean placeCaretAtUndefinedGuard() {
     return (state == State.CARET_AT_VARIABLE ||
             state == State.CARET_AT_METHOD ||
             state == State.CARET_AT_ENUM);
   }
+
+  public boolean placeCaretAtVariableGuard() {
+    return (state == State.CARET_AT_UNDEFINED && isVariableAdded);
+  }
+
+  public boolean placeCaretAtEnumGuard() {
+    return (state == State.CARET_AT_UNDEFINED && isEnumAdded);
+  }
+
+  public boolean placeCaretAtMethodGuard() {
+    return (state == State.CARET_AT_UNDEFINED && isMethodAdded);
+  }
+
+  public boolean viewImpl1Guard() {
+    return (state == State.CARET_AT_ENUM);
+  }
+
+  public boolean viewImpl2Guard() {
+    return (state == State.CARET_AT_METHOD);
+  }
+
+  public boolean viewImpl3Guard() {
+    return (state == State.CARET_AT_VARIABLE);
+  }
+
+  public boolean viewDocu1Guard(){
+    return (state == State.CARET_AT_ENUM);
+  }
+
+  public boolean viewDocu2Guard(){
+    return (state == State.CARET_AT_METHOD);
+  }
+
+  public boolean viewDocu3Guard() {
+    return (state == State.CARET_AT_VARIABLE);
+  }
+
+  public boolean closeVariableWindowGuard() {
+    return (state == State.VARIABLE_IMPL);
+  }
+
+  public boolean closeEnumWindowGuard() {
+    return (state == State.ENUM_IMPL);
+  }
+
+  public boolean closeMethodWindowGuard() {
+    return (state == State.METHOD_IMPL);
+  }
+
+  public boolean closeVariableDocWindowGuard() {
+    return (state == State.VARIABLE_DOCU);
+  }
+
+  public boolean closeEnumDocWindowGuard() {
+    return (state == State.ENUM_DOCU);
+  }
+
+  public boolean closeMethodDocWindowGuard() {return (state == State.METHOD_DOCU);}
+
+  @Action
+  public void addVariable() {
+    adapter.addVariable(variableRef[0]);
+    //System.out.println(adapter.getContent());
+    isVariableAdded = true;
+  }
+
+  @Action
+  public void addEnum() {
+    adapter.addEnum(enumRef[0]);
+    isEnumAdded = true;
+  }
+
+  @Action
+  public void addMethod() {
+    adapter.addMethod(methodRef[0]);
+    isMethodAdded = true;
+  }
+
+  @Action
+  public void rmVariable() {
+    adapter.removeVariable();
+    isVariableAdded = false;
+  }
+
+  @Action
+  public void rmEnum() {
+    adapter.removeEnum();
+    isEnumAdded = false;
+  }
+
+  @Action
+  public void rmMethod() {
+    adapter.removeMethod();
+    isMethodAdded = false;
+  }
+
   @Action
   public void placeCaretAtUndefined() {
     adapter.placeCaretAtUndefined();
@@ -116,54 +189,24 @@ public class ViewImplementationModel implements FsmModel {
   }
 
 
-  public boolean placeCaretAtVariableGuard() {
-    return (state == State.CARET_AT_UNDEFINED && isVariableAdded);
-  }
   @Action
   public void placeCaretAtVariable() {
     adapter.placeCaretAtVariable();
     state = State.CARET_AT_VARIABLE;
   }
 
-  public boolean viewImpl3Guard() {
-    return (state == State.CARET_AT_VARIABLE);
-  }
-  @Action
-  public void viewImpl3() {
-    String impl = adapter.viewVariableImplementation();
-    assertEquals(variableRef[0].trim(), impl.trim());
-    state = State.VARIABLE_IMPL;
-  }
-
-  public boolean viewDocu3Guard() {
-    return (state == State.CARET_AT_VARIABLE);
-  }
-  @Action
-  public void viewDocu3() {
-    String docu = adapter.viewVariableDocumentation();
-    assertTrue(docu.contains(variableRef[1]));
-  }
-
-  public boolean closeVariableWindowGuard() {
-    return (state == State.VARIABLE_IMPL || state == State.VARIABLE_DOCU);
-  }
-  @Action
-  public void closeVariableWindow() {
-    state = State.CARET_AT_VARIABLE;
-  }
-
-  public boolean placeCaretAtEnumGuard() {
-    return (state == State.CARET_AT_UNDEFINED && isEnumAdded);
-  }
   @Action
   public void placeCaretAtEnum() {
     adapter.placeCaretAtEnum();
     state = State.CARET_AT_ENUM;
   }
 
-  public boolean viewImpl1Guard() {
-    return (state == State.CARET_AT_ENUM);
+  @Action
+  public void placeCaretAtMethod() {
+    adapter.placeCaretAtMethod();
+    state = State.CARET_AT_METHOD;
   }
+
   @Action
   public void viewImpl1() {
     String impl = adapter.viewEnumImplementation();
@@ -171,9 +214,20 @@ public class ViewImplementationModel implements FsmModel {
     state = State.ENUM_IMPL;
   }
 
-  public boolean viewDocu1Guard(){
-    return (state == State.CARET_AT_ENUM);
+  @Action
+  public void viewImpl2() {
+    String impl = adapter.viewMethodImplementation();
+    assertEquals(methodRef[0].trim(), impl.trim());
+    state = State.METHOD_IMPL;
   }
+
+  @Action
+  public void viewImpl3() {
+    String impl = adapter.viewVariableImplementation();
+    assertEquals(variableRef[0].trim(), impl.trim());
+    state = State.VARIABLE_IMPL;
+  }
+
   @Action
   public void viewDocu1() {
     String docu = adapter.viewEnumDocumentation();
@@ -181,13 +235,50 @@ public class ViewImplementationModel implements FsmModel {
     state = State.ENUM_DOCU;
   }
 
-  public boolean closeEnumWindowGuard() {
-    return (state == State.ENUM_IMPL || state == State.ENUM_DOCU);
+  @Action
+  public void viewDocu2() {
+    String docu = adapter.viewMethodDocumentation();
+    assertTrue(docu.contains(methodRef[1]));
+    state = State.METHOD_DOCU;
   }
+
+  @Action
+  public void viewDocu3() {
+    String docu = adapter.viewVariableDocumentation();
+    assertTrue(docu.contains(variableRef[1]));
+  }
+
+  @Action
+  public void closeVariableWindow() {
+    state = State.CARET_AT_VARIABLE;
+  }
+
+  @Action
+  public void closeMethodWindow() {
+    state = State.CARET_AT_METHOD;
+  }
+
   @Action
   public void closeEnumWindow() {
     state = State.CARET_AT_ENUM;
   }
+
+
+  @Action
+  public void closeVariableDocWindow() {
+    state = State.CARET_AT_VARIABLE;
+  }
+
+  @Action
+  public void closeMethodDocWindow() {
+    state = State.CARET_AT_METHOD;
+  }
+
+  @Action
+  public void closeEnumDocWindow() {
+    state = State.CARET_AT_ENUM;
+  }
+
 
   @Override
   public Object getState() {
