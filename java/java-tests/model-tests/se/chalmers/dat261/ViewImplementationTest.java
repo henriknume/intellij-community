@@ -26,8 +26,8 @@ import se.chalmers.dat261.model.ViewImplementationModel;
 
 import javax.swing.*;
 
-public class CodeCompletionTest extends TestCase {
-  public void testCompletion() throws Exception {
+public class ViewImplementationTest extends TestCase {
+  public void testImplView() throws Exception {
     // Everything done on the fixture needs to be on the UI thread. ModelJUnit will use it's own threads, so we need some extra work to end
     // up on the right thread. Note that the below is non-blocking.
     SwingUtilities.invokeAndWait(() -> {
