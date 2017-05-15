@@ -38,7 +38,7 @@ public class ViewImplementationTest extends TestCase {
     tester.addCoverageMetric(new TransitionPairCoverage());
   }
 
-  public void testImplView() throws Exception {
+  public void testCompletion() throws Exception {
     // Everything done on the fixture needs to be on the UI thread. ModelJUnit will use it's own threads, so we need some extra work to end
     // up on the right thread. Note that the below is non-blocking.
     SwingUtilities.invokeAndWait(() -> {
