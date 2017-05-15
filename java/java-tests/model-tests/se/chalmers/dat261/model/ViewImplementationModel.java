@@ -21,6 +21,7 @@ import nz.ac.waikato.modeljunit.Action;
 import nz.ac.waikato.modeljunit.FsmModel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -28,13 +29,13 @@ import static org.junit.Assert.assertTrue;
  */
 public class ViewImplementationModel implements FsmModel {
 
-  private String[] variableRef = new String[]{"public final int fooInt = 1;\n", "<PRE>public final int <b>fooInt = 1</b></PRE>", ""};
+  private String[] variableRef = new String[]{"private final int fooInt = 1;\n", "<PRE>private final int <b>fooInt = 1</b></PRE>", ""};
   public boolean isVariableAdded = false;
 
-  private String[] methodRef = new String[]{"public void fooMethod(){}\n", "", " "};
+  private String[] methodRef = new String[]{"private void fooMethod(){}\n", "", " "};
   public boolean isMethodAdded = false;
 
-  private String[] enumRef = new String[]{"public enum Foo{A, B,};\n", "Foo", " "};
+  private String[] enumRef = new String[]{"private enum Foo{A, B,};\n", "Foo", " "};
   public boolean isEnumAdded = false;
 
   private State state = State.CARET_AT_UNDEFINED;
@@ -145,47 +146,56 @@ public class ViewImplementationModel implements FsmModel {
   @Action
   public void addVariable() {
     adapter.addVariable(variableRef[0]);
-    //System.out.println(adapter.getContent());
     isVariableAdded = true;
+    assertTrue(documentContains(variableRef[0]));
+    assertEquals(nrOfAddedElements(), adapter.countNrOfAddedElements());
   }
 
   @Action
   public void addEnum() {
     adapter.addEnum(enumRef[0]);
     isEnumAdded = true;
+    assertTrue(documentContains(enumRef[0]));
+    assertEquals(nrOfAddedElements(), adapter.countNrOfAddedElements());
   }
 
   @Action
   public void addMethod() {
     adapter.addMethod(methodRef[0]);
     isMethodAdded = true;
+    assertTrue(documentContains(methodRef[0]));
+    assertEquals(nrOfAddedElements(), adapter.countNrOfAddedElements());
   }
 
   @Action
   public void rmVariable() {
     adapter.removeVariable();
     isVariableAdded = false;
+    assertFalse(documentContains(variableRef[0]));
+    assertEquals(nrOfAddedElements(), adapter.countNrOfAddedElements());
   }
 
   @Action
   public void rmEnum() {
     adapter.removeEnum();
     isEnumAdded = false;
+    assertFalse(documentContains(enumRef[0]));
+    assertEquals(nrOfAddedElements(), adapter.countNrOfAddedElements());
   }
 
   @Action
   public void rmMethod() {
     adapter.removeMethod();
     isMethodAdded = false;
+    assertFalse(documentContains(methodRef[0]));
+    assertEquals(nrOfAddedElements(), adapter.countNrOfAddedElements());
   }
 
   @Action
   public void placeCaretAtUndefined() {
     adapter.placeCaretAtUndefined();
     state = State.CARET_AT_UNDEFINED;
-    System.out.println("-----------------------");
-    System.out.println(adapter.getContent());
-    System.out.println("-----------------------");
+    //printAdapter();
   }
 
 
@@ -288,12 +298,47 @@ public class ViewImplementationModel implements FsmModel {
 
   @Override
   public void reset(boolean b) {
+    //reset model
     state = State.CARET_AT_UNDEFINED;
-    adapter.placeCaretAtUndefined();
-    //And clear the class
+    isMethodAdded = false;
+    isEnumAdded = false;
+    isVariableAdded = false;
+
+    //reset sut
+    adapter.reset();
+
+    //verify
+    String expected = "\npublic class ViewImplementation {\n" +
+                     "  \n" +
+                     "}\n";
+    assertEquals(expected, adapter.getContent());
   }
 
   public void cleanup() throws Exception {
     adapter.cleanup();
+  }
+
+  public void printAdapter(){
+    System.out.println("-----------------------");
+    System.out.println(adapter.getContent());
+    System.out.println("-----------------------");
+  }
+
+  private boolean documentContains(String text){
+    return adapter.getContent().contains(text);
+  }
+
+  private int nrOfAddedElements(){
+    int c = 0;
+    if(isVariableAdded){
+      c++;
+    }
+    if(isEnumAdded){
+      c++;
+    }
+    if(isMethodAdded){
+      c++;
+    }
+    return c;
   }
 }

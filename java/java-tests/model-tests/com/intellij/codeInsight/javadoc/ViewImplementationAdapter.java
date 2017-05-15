@@ -164,4 +164,23 @@ public class ViewImplementationAdapter extends BaseAdapter {
   public String viewMethodDocumentation() {
     return JavaDocumentationProvider.generateExternalJavadoc(selectedMethod);
   }
+
+  public int countNrOfAddedElements(){
+    String[] doc = getContent().split("\n");
+    int c = 0;
+    for(String line : doc){
+      if(line.contains("private")){ // every added element is private.
+        c++;
+      }
+    }
+    return c;
+  }
+
+  public void reset(){
+    configureByFile("/model-based/ViewImplementation.java");
+    updateClassVariable();
+    selectedVariable = null;
+    selectedMethod = null;
+    selectedEnum = null;
+  }
 }

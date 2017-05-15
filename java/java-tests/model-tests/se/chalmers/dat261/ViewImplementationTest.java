@@ -26,7 +26,7 @@ import se.chalmers.dat261.model.ViewImplementationModel;
 
 import javax.swing.*;
 
-public class CodeCompletionTest extends TestCase {
+public class ViewImplementationTest extends TestCase {
 
   private void initializeTester(Tester tester){
     tester.buildGraph();
@@ -36,10 +36,9 @@ public class CodeCompletionTest extends TestCase {
     tester.addCoverageMetric(new StateCoverage());
     tester.addCoverageMetric(new ActionCoverage());
     tester.addCoverageMetric(new TransitionPairCoverage());
-
   }
 
-  public void testCompletion() throws Exception {
+  public void testImplView() throws Exception {
     // Everything done on the fixture needs to be on the UI thread. ModelJUnit will use it's own threads, so we need some extra work to end
     // up on the right thread. Note that the below is non-blocking.
     SwingUtilities.invokeAndWait(() -> {
