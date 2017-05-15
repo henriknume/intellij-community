@@ -45,7 +45,7 @@ public class ViewImplementationTest extends TestCase {
       ViewImplementationModel implementationModel = null;
 
       try {
-      String test = "AllRound";
+      String test = "Random";
       Tester tester;
       implementationModel = new ViewImplementationModel();
       int nbrTests = 200;
@@ -54,12 +54,20 @@ public class ViewImplementationTest extends TestCase {
         default:
           tester = new RandomTester(implementationModel);
           initializeTester(tester);
-          tester.generate(nbrTests);
+          for (int i = 0; i < nbrTests; i++)
+            ((RandomTester) tester).doRandomAction();
           break;
         case "AllRound":
           tester = new AllRoundTester(implementationModel);
+          tester.addCoverageMetric(new StateCoverage() {
+            @Override
+            public String getName() {
+              return "REAL total state coverage";
+            }
+          });
+
           initializeTester(tester);
-          ((AllRoundTester)tester).setLoopTolerance(2);
+          ((AllRoundTester)tester).setLoopTolerance(3);
           for(int i = 0; i < nbrTests; i++){
             ((AllRoundTester) tester).allRoundTrips();
           }
