@@ -46,7 +46,7 @@ public class CodeCompletionTest extends TestCase {
       ViewImplementationModel implementationModel = null;
 
       try {
-      String test = "";
+      String test = "AllRound";
       Tester tester;
       implementationModel = new ViewImplementationModel();
       int nbrTests = 200;
@@ -60,6 +60,7 @@ public class CodeCompletionTest extends TestCase {
         case "AllRound":
           tester = new AllRoundTester(implementationModel);
           initializeTester(tester);
+          ((AllRoundTester)tester).setLoopTolerance(2);
           for(int i = 0; i < nbrTests; i++){
             ((AllRoundTester) tester).allRoundTrips();
           }
@@ -69,7 +70,7 @@ public class CodeCompletionTest extends TestCase {
           initializeTester(tester);
           for (int i = 0; i < nbrTests; i++) {
             ((GreedyTester)tester).doGreedyRandomActionOrReset();
-          }
+      }
           break;
         case "LookAhead":
           tester = new LookaheadTester(implementationModel);
