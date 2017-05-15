@@ -27,25 +27,61 @@ import se.chalmers.dat261.model.ViewImplementationModel;
 import javax.swing.*;
 
 public class CodeCompletionTest extends TestCase {
+
+  private void initializeTester(Tester tester){
+    tester.buildGraph();
+    tester.addListener(new VerboseListener());
+    tester.addListener(new StopOnFailureListener());
+    tester.addCoverageMetric(new TransitionCoverage());
+    tester.addCoverageMetric(new StateCoverage());
+    tester.addCoverageMetric(new ActionCoverage());
+    tester.addCoverageMetric(new TransitionPairCoverage());
+
+  }
+
   public void testCompletion() throws Exception {
     // Everything done on the fixture needs to be on the UI thread. ModelJUnit will use it's own threads, so we need some extra work to end
     // up on the right thread. Note that the below is non-blocking.
     SwingUtilities.invokeAndWait(() -> {
       ViewImplementationModel implementationModel = null;
+
       try {
-        implementationModel = new ViewImplementationModel();
-        RandomTester tester = new RandomTester(implementationModel);
+      String test = "";
+      Tester tester;
+      implementationModel = new ViewImplementationModel();
+      int nbrTests = 200;
 
-        tester.buildGraph();
-        tester.addListener(new VerboseListener());
-        tester.addListener(new StopOnFailureListener());
-        tester.addCoverageMetric(new TransitionCoverage());
-        tester.addCoverageMetric(new StateCoverage());
-        tester.addCoverageMetric(new ActionCoverage());
-        tester.addCoverageMetric(new TransitionPairCoverage());
-
-        tester.generate(200);
-
+      switch(test) {
+        default:
+          tester = new RandomTester(implementationModel);
+          initializeTester(tester);
+          tester.generate(nbrTests);
+          break;
+        case "AllRound":
+          tester = new AllRoundTester(implementationModel);
+          initializeTester(tester);
+          for(int i = 0; i < nbrTests; i++){
+            ((AllRoundTester) tester).allRoundTrips();
+          }
+          break;
+        case "Greedy":
+          tester = new GreedyTester(implementationModel);
+          initializeTester(tester);
+          for (int i = 0; i < nbrTests; i++) {
+            ((GreedyTester)tester).doGreedyRandomActionOrReset();
+          }
+          break;
+        case "LookAhead":
+          tester = new LookaheadTester(implementationModel);
+          initializeTester(tester);
+          ((LookaheadTester)tester).setNewTransValue(1);
+          ((LookaheadTester)tester).setNewActionValue(1);
+          ((LookaheadTester)tester).setDepth(1);
+          for (int i = 0; i < nbrTests; i++) {
+            tester.generate();
+          }
+          break;
+      }
         tester.printCoverage();
       }
       catch (Exception e) {
