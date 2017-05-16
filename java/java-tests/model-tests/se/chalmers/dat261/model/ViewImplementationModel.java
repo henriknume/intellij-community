@@ -32,7 +32,7 @@ public class ViewImplementationModel implements FsmModel {
   private String[] variableRef = new String[]{"private final int fooInt = 1;\n", "<PRE>private final int <b>fooInt = 1</b></PRE>", ""};
   public boolean isVariableAdded = false;
 
-  private String[] methodRef = new String[]{"private void fooMethod(){}\n", "", " "};
+  private String[] methodRef = new String[]{"private void fooMethod(){}\n", "<PRE>private&nbsp;void&nbsp;<b>fooMethod</b>()</PRE>", " "};
   public boolean isMethodAdded = false;
 
   private String[] enumRef = new String[]{"private enum Foo{A, B,};\n", "Foo", " "};
@@ -50,12 +50,6 @@ public class ViewImplementationModel implements FsmModel {
     CARET_AT_ENUM,
     CARET_AT_METHOD,
     CARET_AT_VARIABLE,
-    ENUM_IMPL,
-    ENUM_DOCU,
-    METHOD_IMPL,
-    METHOD_DOCU,
-    VARIABLE_IMPL,
-    VARIABLE_DOCU,
     CARET_AT_UNDEFINED
   }
 
@@ -97,51 +91,29 @@ public class ViewImplementationModel implements FsmModel {
     return (state == State.CARET_AT_UNDEFINED && isMethodAdded);
   }
 
-  public boolean viewImpl1Guard() {
+  public boolean viewEnumImplGuard() {
     return (state == State.CARET_AT_ENUM);
   }
 
-  public boolean viewImpl2Guard() {
+  public boolean viewMethodImplGuard() {
     return (state == State.CARET_AT_METHOD);
   }
 
-  public boolean viewImpl3Guard() {
+  public boolean viewVariableImplGuard() {
     return (state == State.CARET_AT_VARIABLE);
   }
 
-  public boolean viewDocu1Guard(){
+  public boolean viewEnumDocuGuard(){
     return (state == State.CARET_AT_ENUM);
   }
 
-  public boolean viewDocu2Guard(){
+  public boolean viewMethodDocuGuard(){
     return (state == State.CARET_AT_METHOD);
   }
 
-  public boolean viewDocu3Guard() {
+  public boolean viewVariableDocuGuard() {
     return (state == State.CARET_AT_VARIABLE);
   }
-
-  public boolean closeVariableWindowGuard() {
-    return (state == State.VARIABLE_IMPL);
-  }
-
-  public boolean closeEnumWindowGuard() {
-    return (state == State.ENUM_IMPL);
-  }
-
-  public boolean closeMethodWindowGuard() {
-    return (state == State.METHOD_IMPL);
-  }
-
-  public boolean closeVariableDocWindowGuard() {
-    return (state == State.VARIABLE_DOCU);
-  }
-
-  public boolean closeEnumDocWindowGuard() {
-    return (state == State.ENUM_DOCU);
-  }
-
-  public boolean closeMethodDocWindowGuard() {return (state == State.METHOD_DOCU);}
 
   @Action
   public void addVariable() {
@@ -198,7 +170,6 @@ public class ViewImplementationModel implements FsmModel {
     //printAdapter();
   }
 
-
   @Action
   public void placeCaretAtVariable() {
     adapter.placeCaretAtVariable();
@@ -218,76 +189,39 @@ public class ViewImplementationModel implements FsmModel {
   }
 
   @Action
-  public void viewImpl1() {
+  public void viewEnumImpl() {
     String impl = adapter.viewEnumImplementation();
     assertEquals(enumRef[0].trim(), impl.trim());
-    state = State.ENUM_IMPL;
   }
 
   @Action
-  public void viewImpl2() {
+  public void viewMethodImpl() {
     String impl = adapter.viewMethodImplementation();
     assertEquals(methodRef[0].trim(), impl.trim());
-    state = State.METHOD_IMPL;
   }
 
   @Action
-  public void viewImpl3() {
+  public void viewVariableImpl() {
     String impl = adapter.viewVariableImplementation();
     assertEquals(variableRef[0].trim(), impl.trim());
-    state = State.VARIABLE_IMPL;
   }
 
   @Action
-  public void viewDocu1() {
+  public void viewEnumDocu() {
     String docu = adapter.viewEnumDocumentation();
     assertTrue(docu.contains(enumRef[1]));
-    state = State.ENUM_DOCU;
   }
 
   @Action
-  public void viewDocu2() {
+  public void viewMethodDocu() {
     String docu = adapter.viewMethodDocumentation();
     assertTrue(docu.contains(methodRef[1]));
-    state = State.METHOD_DOCU;
   }
 
   @Action
-  public void viewDocu3() {
+  public void viewVariableDocu() {
     String docu = adapter.viewVariableDocumentation();
     assertTrue(docu.contains(variableRef[1]));
-    state = State.VARIABLE_DOCU;
-  }
-
-  @Action
-  public void closeVariableWindow() {
-    state = State.CARET_AT_VARIABLE;
-  }
-
-  @Action
-  public void closeMethodWindow() {
-    state = State.CARET_AT_METHOD;
-  }
-
-  @Action
-  public void closeEnumWindow() {
-    state = State.CARET_AT_ENUM;
-  }
-
-
-  @Action
-  public void closeVariableDocWindow() {
-    state = State.CARET_AT_VARIABLE;
-  }
-
-  @Action
-  public void closeMethodDocWindow() {
-    state = State.CARET_AT_METHOD;
-  }
-
-  @Action
-  public void closeEnumDocWindow() {
-    state = State.CARET_AT_ENUM;
   }
 
 
